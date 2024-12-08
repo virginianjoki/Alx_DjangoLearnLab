@@ -5,12 +5,17 @@
 <p>{{ post.content }}</p>
 
 <div class="post-actions">
+    <!-- Edit link, ensure post.id is being used -->
     <a href="{% url 'post_update' post.id %}" class="btn btn-secondary">Edit</a>
+
+    <!-- Delete form with POST method -->
     <form action="{% url 'post_delete' post.id %}" method="POST" style="display:inline;">
         {% csrf_token %}
         <button type="submit" class="btn btn-danger">Delete</button>
     </form>
 </div>
 
+<!-- Back to list link -->
 <a href="{% url 'post_list' %}" class="btn btn-primary">Back to Posts</a>
+
 {% endblock %}
