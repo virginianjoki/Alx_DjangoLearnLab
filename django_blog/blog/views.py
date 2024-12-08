@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Post, Comment, Tag
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from .forms import PostForm
 
 # Create your views here.
 
@@ -98,6 +99,7 @@ class PostByTagListView(ListView):
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     fields = ['title', 'content']
+    form_class = PostForm
     template_name = 'blog/post_form.html'
 
     def test_func(self):
@@ -117,6 +119,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
+    form_class = PostForm
     fields = ['title', 'content', 'tags']
     template_name = 'blog/post_form.html'
 
