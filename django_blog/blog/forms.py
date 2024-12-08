@@ -1,13 +1,33 @@
-# forms.py
 from django import forms
-from .models import Post
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User 
+from .models import Comment,Post
+from taggit.forms import TagWidget 
+
+
+#custom registration
+class CustomUser(UserCreationForm):
+    email = forms.EmailField(required = True)
+
+    class Meta:
+        model = User
+        fields = ['username','email','password1','password2']
+
+# user update form to update username and email fields
+class UpdateForm(forms.ModelForm):
+        class Meta:
+            model = User
+            fields = ["username", "email", 'password' ]
 
 class PostForm(forms.ModelForm):
-    class Meta:
-        model = Post
-        fields = ['title', 'content']  # The fields for creating or editing a post
+     class Meta:
+          model = Post
+          fields = ['title', 'content', 'tags']
+          widgets = {
+            'tags': TagWidget(),
+          }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['title'].widget.attrs.update({'class': 'form-control'})
-        self.fields['content'].widget.attrs.update({'class': 'form-control'})
+class CommentForm(forms.ModelForm):
+     class Meta:
+          model = Comment
+          fields = ['content']
