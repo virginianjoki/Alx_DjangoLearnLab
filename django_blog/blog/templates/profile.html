@@ -1,0 +1,32 @@
+<!-- register.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    {%load static%}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>Profile</h1>
+     <!-- Display Profile Picture -->
+    {% if profile.profile_picture %}
+        <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" style="width: 150px; height: 150px; border-radius: 50%;">
+    {% else %}
+        <img src="{% static 'images/default_profile.jpg' %}" alt="Default Profile Picture" style="width: 150px; height: 150px; border-radius: 50%;">
+    {% endif %}
+
+    <p>Username: {{ user.username }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <label for="email">Email:</label>
+        <input type="email" name="email" value="{{ user.email }}" required>
+        <button type="submit">Update Profile</button>
+    </form>
+    <!-- Display Bio -->
+    <h2>Bio:</h2>
+    <p>{{ profile.bio|default:"No bio available." }}</p>
+    <a href="{% url 'logout' %}">Logout</a>
+</body>
+</html>
