@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from .models import User,Post,Profile
+from django.contrib.auth.models import User
 from django.views.generic import TemplateView,CreateView,DetailView,ListView,UpdateView,DeleteView
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import  login_required
 from .forms import CustomUser
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -10,6 +11,7 @@ from .models import Post, Comment, Tag
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from .forms import PostForm
+from .forms import UserRegisterForm
 
 # Create your views here.
 
@@ -42,6 +44,20 @@ def login_view(request):
         else:
             return render(request, 'blog/login.html', {'error': 'Invalid username or password.'})
     return render(request, 'blog/login.html')
+
+def profile(request):
+    return render(request, 'profile.html', {'user': request.user})    
+
+def register(request):
+    if request.method == 'POST':
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Log in the user after registration
+            return redirect('home')
+    else:
+        form = UserRegisterForm()
+    return render(request, 'registration/register.html', {'form': form})    
 
 
 def logout_view(request):
@@ -131,6 +147,23 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     def get_success_url(self):
         # Redirect to the list view after successful creation
         return reverse_lazy('post-list')
+    
+# blog/views.py
+from django.db.models import Q
+
+class PostSearchView(ListView):
+    model = Post
+    template_name = 'blog/post_search.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        if query:
+            return Post.objects.filter(
+                Q(title__icontains=query) | Q(content__icontains=query) | Q(tags__name__icontains=query)
+            ).distinct()
+        return Post.objects.none()
+
 
 
 class PostDetailView(DetailView):
