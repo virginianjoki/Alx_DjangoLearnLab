@@ -71,15 +71,18 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'django_blog.urls'
 
-import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Ensure 'templates' directory is included
         'APP_DIRS': True,
+         'DIRS': [BASE_DIR / 'templates'],
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -89,16 +92,20 @@ TEMPLATES = [
             ],
         },
     },
+
 ]
+
 
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'blog', 'static'),  # Explicitly include static files from 'blog/static/'
+    BASE_DIR / 'static',  
 ]
-# # STATICFILES_DIRS = [
-# #     BASE_DIR / 'static',
-# ]
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'blog' / 'static',  
+]
+
 
 
 WSGI_APPLICATION = 'django_blog.wsgi.application'
